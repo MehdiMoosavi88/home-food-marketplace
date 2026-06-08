@@ -43,6 +43,13 @@ INSTALLED_APPS = [
     'django_filters',
 
     'core',
+
+    'apps.accounts',
+    'apps.cooks',
+    'apps.menus',
+    'apps.reservations',
+    'apps.reviews',
+    'apps.notifications',
 ]
 
 REST_FRAMEWORK = {
