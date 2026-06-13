@@ -45,10 +45,7 @@ class MenuItem(UUIDBaseModel):
         blank=True
     )
 
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
+    price = models.PositiveIntegerField(help_text="Price in Toman")
 
     image = models.ImageField(
         upload_to="menu_items/",
@@ -56,7 +53,7 @@ class MenuItem(UUIDBaseModel):
         null=True
     )
 
-    active = models.BooleanField(
+    is_active = models.BooleanField(
         default=True
     )
 
