@@ -110,11 +110,14 @@ SWAGGER_SETTINGS = {
             "name": "Authorization",
 
             "in": "header",
-
-            "description":
-                "JWT Authorization header. Example: Bearer <token>",
         }
     },
+
+    "SECURITY_REQUIREMENTS": [
+        {
+            "Bearer": []
+        }
+    ],
 }
 
 MIDDLEWARE = [

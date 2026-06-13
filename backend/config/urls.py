@@ -64,4 +64,11 @@ urlpatterns = [
         ),
         name="redoc"
     ),
+
+    path(
+    "api/cooks/",
+    include(
+        "apps.cooks.urls"
+    )
+),
 ]
