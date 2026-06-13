@@ -71,4 +71,11 @@ urlpatterns = [
         "apps.cooks.urls"
     )
 ),
+
+path(
+    "api/cooks/menu/",
+    include(
+        "apps.menus.urls"
+    )
+),
 ]
