@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_filters',
 
     'core',
+    'drf_yasg',
 
     'apps.accounts',
     'apps.cooks',
@@ -94,6 +95,26 @@ SPECTACULAR_SETTINGS = {
 
     'VERSION':
         '1.0.0',
+}
+
+SWAGGER_SETTINGS = {
+
+    "USE_SESSION_AUTH": False,
+
+    "SECURITY_DEFINITIONS": {
+
+        "Bearer": {
+
+            "type": "apiKey",
+
+            "name": "Authorization",
+
+            "in": "header",
+
+            "description":
+                "JWT Authorization header. Example: Bearer <token>",
+        }
+    },
 }
 
 MIDDLEWARE = [

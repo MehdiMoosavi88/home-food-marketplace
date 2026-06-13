@@ -17,6 +17,8 @@ from .serializers import (
 @swagger_auto_schema(
     tags=["Authentication"]
 )
+def post(self, request, *args, **kwargs):
+    return super().post(request, *args, **kwargs)
 class RegisterAPIView(
     generics.CreateAPIView
 ):

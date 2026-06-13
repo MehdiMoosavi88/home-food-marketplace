@@ -9,6 +9,24 @@ from drf_spectacular.views import (
     SpectacularSwaggerView
 )
 
+from rest_framework import permissions
+
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Home Food Marketplace API",
+        default_version="v1",
+        description="API Documentation for Home Food Marketplace",
+        contact=openapi.Contact(
+            email="admin@example.com"
+        ),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
 urlpatterns = [
 
     path(
@@ -30,10 +48,20 @@ urlpatterns = [
     ),
 
     path(
-        'api/docs/',
-        SpectacularSwaggerView.as_view(
-            url_name='schema'
+        "api/docs/",
+        schema_view.with_ui(
+            "swagger",
+            cache_timeout=0
         ),
-        name='swagger-ui'
+        name="swagger-ui"
+    ),
+
+    path(
+        "api/redoc/",
+        schema_view.with_ui(
+            "redoc",
+            cache_timeout=0
+        ),
+        name="redoc"
     ),
 ]
