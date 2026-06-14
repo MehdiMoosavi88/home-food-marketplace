@@ -24,3 +24,24 @@ class CookProfileSerializer(
             "address",
             "bio",
         )
+
+class PublicCookSerializer(
+    serializers.ModelSerializer
+):
+
+    username = (
+        serializers.CharField(
+            source="user.username"
+        )
+    )
+
+    class Meta:
+
+        model = CookProfile
+
+        fields = (
+            "id",
+            "username",
+            "city",
+            "bio",
+        )

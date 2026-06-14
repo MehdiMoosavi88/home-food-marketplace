@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import (
-    CookMeAPIView
+    CookMeAPIView,
+    PublicCookListAPIView
 )
 
 urlpatterns = [
@@ -11,4 +12,10 @@ urlpatterns = [
         CookMeAPIView.as_view(),
         name="cook-me"
     ),
+
+    path(
+    "public/cooks/",
+    PublicCookListAPIView.as_view(),
+    name="public-cooks"
+),
 ]

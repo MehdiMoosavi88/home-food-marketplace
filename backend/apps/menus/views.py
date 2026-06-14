@@ -20,7 +20,13 @@ from apps.cooks.permissions import (
     IsCook
 )
 
+from apps.cooks.models import (
+    CookProfile
+)
+
 from .permissions import IsMenuOwner
+
+from rest_framework.permissions import AllowAny
 
 from rest_framework.parsers import (
     MultiPartParser,
@@ -483,3 +489,76 @@ class AvailabilityDeleteAPIView(
                 cook_profile
             )
         )
+    
+class PublicMenuAPIView(
+    generics.RetrieveAPIView
+):
+
+    serializer_class = (
+        MenuSerializer
+    )
+
+    permission_classes = [AllowAny]
+
+    lookup_url_kwarg = (
+        "cook_id"
+    )
+
+    def get_object(self):
+
+        cook = (
+            CookProfile.objects
+            .select_related("menu")
+            .get(
+                pk=self.kwargs[
+                    "cook_id"
+                ]
+            )
+        )
+
+        return cook.menu
+    
+class PublicMenuItemListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        MenuItemSerializer
+    )
+
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+
+        return (
+            MenuItem.objects
+            .filter(
+                menu__cook_id=
+                self.kwargs[
+                    "cook_id"
+                ],
+                is_active=True,
+                menu__is_active=True
+            )
+            .order_by(
+                "name"
+            )
+        )
+    
+class PublicMenuItemDetailAPIView(
+    generics.RetrieveAPIView
+):
+
+    serializer_class = (
+        MenuItemSerializer
+    )
+
+    permission_classes = [AllowAny]
+
+    queryset = (
+        MenuItem.objects
+        .filter(
+            is_active=True,
+            menu__is_active=True
+        )
+    )

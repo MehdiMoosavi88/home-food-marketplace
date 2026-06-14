@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.permissions import AllowAny
 
 from .models import CookProfile
 
@@ -58,3 +59,21 @@ class CookMeAPIView(
             *args,
             **kwargs
         )
+    
+class PublicCookListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        CookProfileSerializer
+    )
+
+    permission_classes = [AllowAny]
+
+    queryset = (
+        CookProfile.objects
+        .select_related("user")
+        .order_by(
+            "user__username"
+        )
+    )

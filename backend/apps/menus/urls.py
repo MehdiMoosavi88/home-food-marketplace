@@ -10,7 +10,11 @@ from .views import (
     AvailabilityCreateAPIView,
     AvailabilityListAPIView,
     AvailabilityUpdateAPIView,
-    AvailabilityDeleteAPIView
+    AvailabilityDeleteAPIView,
+    PublicMenuAPIView,
+    PublicMenuItemListAPIView,
+    PublicMenuItemDetailAPIView
+
 )
 
 urlpatterns = [
@@ -67,5 +71,23 @@ urlpatterns = [
     "availabilities/<uuid:pk>/delete/",
     AvailabilityDeleteAPIView.as_view(),
     name="availability-delete"
+    ),
+
+    path(
+    "public/cooks/<uuid:cook_id>/menu/",
+    PublicMenuAPIView.as_view(),
+    name="public-menu"
+    ),
+    
+    path(
+    "public/cooks/<uuid:cook_id>/menu/items/",
+    PublicMenuItemListAPIView.as_view(),
+    name="public-menu-items"
+    ),
+    
+    path(
+    "public/menu-items/<uuid:pk>/",
+    PublicMenuItemDetailAPIView.as_view(),
+    name="public-menu-item-detail"
     ),
 ]
