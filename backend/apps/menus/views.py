@@ -6,12 +6,14 @@ from drf_yasg.utils import (
 
 from .models import (
     Menu,
-    MenuItem
+    MenuItem,
+    MenuItemAvailability
 )
 
 from .serializers import (
     MenuSerializer,
-    MenuItemSerializer
+    MenuItemSerializer,
+    MenuItemAvailabilitySerializer
 )
 
 from apps.cooks.permissions import (
@@ -150,6 +152,15 @@ class MenuItemListAPIView(
     def get_queryset(
         self
     ):
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItem.objects
+                .none()
+            )
 
         return (
             MenuItem.objects
@@ -264,6 +275,17 @@ class MenuItemUpdateAPIView(
             .cook_profile
         )
 
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItem
+                .objects
+                .none()
+            )
+
         return MenuItem.objects.filter(
             menu=cook_profile.menu
         )
@@ -287,6 +309,177 @@ class MenuItemDeleteAPIView(
             .cook_profile
         )
 
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItem
+                .objects
+                .none()
+            )
+
         return MenuItem.objects.filter(
             menu=cook_profile.menu
+        )
+    
+class AvailabilityCreateAPIView(
+    generics.CreateAPIView
+):
+
+    serializer_class = (
+        MenuItemAvailabilitySerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def perform_create(
+        self,
+        serializer
+    ):
+
+        menu_item = serializer.validated_data[
+            "menu_item"
+        ]
+
+        if (
+            menu_item.menu.cook.user
+            != self.request.user
+        ):
+            raise PermissionDenied(
+                "Not your menu item."
+            )
+
+        serializer.save()
+
+class AvailabilityListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        MenuItemAvailabilitySerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def get_queryset(self):
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItemAvailability
+                .objects
+                .none()
+            )
+
+        return (
+            MenuItemAvailability
+            .objects
+            .filter(
+                menu_item__menu__cook=
+                cook_profile
+            )
+            .order_by(
+                "date"
+            )
+        )
+    
+class AvailabilityUpdateAPIView(
+    generics.RetrieveUpdateAPIView
+):
+
+    serializer_class = (
+        MenuItemAvailabilitySerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def get_queryset(self):
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItemAvailability
+                .objects
+                .none()
+            )
+
+        return (
+            MenuItemAvailability
+            .objects
+            .filter(
+                menu_item__menu__cook=
+                cook_profile
+            )
+        )
+    
+    def perform_update(
+            self,
+            serializer
+        ):
+        serializer.is_valid(
+        raise_exception=True
+    )
+        serializer.save()
+    
+class AvailabilityDeleteAPIView(
+    generics.DestroyAPIView
+):
+
+    serializer_class = (
+        MenuItemAvailabilitySerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def get_queryset(self):
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItemAvailability
+                .objects
+                .none()
+            )
+
+        return (
+            MenuItemAvailability
+            .objects
+            .filter(
+                menu_item__menu__cook=
+                cook_profile
+            )
         )

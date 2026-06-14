@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from .models import (
     Menu,
-    MenuItem
+    MenuItem,
+    MenuItemAvailability
 )
 
 class MenuSerializer(
@@ -59,3 +60,83 @@ class MenuItemSerializer(
             )
 
         return None
+    
+class MenuItemAvailabilitySerializer(
+    serializers.ModelSerializer
+):
+
+    id = serializers.UUIDField(
+        read_only=True
+    )
+
+    remaining_quantity = (
+        serializers.SerializerMethodField()
+    )
+
+    class Meta:
+
+        model = MenuItemAvailability
+
+        fields = (
+            "id",
+            "menu_item",
+            "date",
+            "max_quantity",
+            "reserved_quantity",
+            "remaining_quantity",
+        )
+
+        read_only_fields = (
+            "id",
+            "reserved_quantity",
+            "remaining_quantity",
+        )
+
+        validators = []
+
+    def get_remaining_quantity(
+        self,
+        obj
+    ):
+        return (
+            obj.max_quantity -
+            obj.reserved_quantity
+        )
+
+    def validate(self, attrs):
+
+        menu_item = attrs.get(
+            "menu_item",
+            self.instance.menu_item
+            if self.instance else None
+        )
+
+        date = attrs.get(
+            "date",
+            self.instance.date
+            if self.instance else None
+        )
+
+        queryset = (
+            MenuItemAvailability.objects
+            .filter(
+                menu_item=menu_item,
+                date=date
+            )
+        )
+
+        if self.instance:
+            queryset = queryset.exclude(
+                pk=self.instance.pk
+            )
+
+        if queryset.exists():
+            raise serializers.ValidationError(
+                {
+                    "non_field_errors": [
+                        "Capacity for this food and date already exists."
+                    ]
+                }
+            )
+
+        return attrs

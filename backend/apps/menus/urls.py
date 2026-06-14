@@ -7,6 +7,10 @@ from .views import (
     MenuItemDetailAPIView,
     MenuItemUpdateAPIView,
     MenuItemDeleteAPIView,
+    AvailabilityCreateAPIView,
+    AvailabilityListAPIView,
+    AvailabilityUpdateAPIView,
+    AvailabilityDeleteAPIView
 )
 
 urlpatterns = [
@@ -39,5 +43,29 @@ urlpatterns = [
         "items/<uuid:pk>/delete/",
         MenuItemDeleteAPIView.as_view(),
         name="menu-item-delete"
+    ),
+
+    path(
+    "availabilities/",
+    AvailabilityListAPIView.as_view(),
+    name="availability-list"
+    ),
+    
+    path(
+    "availabilities/create/",
+    AvailabilityCreateAPIView.as_view(),
+    name="availability-create"
+    ),
+    
+    path(
+    "availabilities/<uuid:pk>/",
+    AvailabilityUpdateAPIView.as_view(),
+    name="availability-update"
+    ),
+    
+    path(
+    "availabilities/<uuid:pk>/delete/",
+    AvailabilityDeleteAPIView.as_view(),
+    name="availability-delete"
     ),
 ]
