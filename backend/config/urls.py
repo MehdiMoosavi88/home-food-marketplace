@@ -81,6 +81,11 @@ path(
         "apps.menus.urls"
     )
 ),
+
+    path(
+        "api/reservations/",
+        include("apps.reservations.urls")
+    ),
 ]
 
 if settings.DEBUG:
