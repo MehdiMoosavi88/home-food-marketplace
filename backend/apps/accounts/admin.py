@@ -7,6 +7,31 @@ from .models import User
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
 
+    list_display = (
+        "username",
+        "email",
+        "role",
+        "is_active",
+        "date_joined",
+    )
+
+    list_filter = (
+        "role",
+        "is_active",
+        "is_staff",
+        "date_joined",
+    )
+
+    search_fields = (
+        "username",
+        "email",
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+    )
+
     fieldsets = UserAdmin.fieldsets + (
         (
             "Marketplace",
@@ -18,9 +43,4 @@ class CustomUserAdmin(UserAdmin):
                 )
             },
         ),
-    )
-
-    readonly_fields = (
-        "created_at",
-        "updated_at",
     )
