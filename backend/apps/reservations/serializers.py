@@ -183,3 +183,25 @@ class ReservationSerializer(
             "created_at",
         )
     
+class CookReservationSerializer(
+    serializers.ModelSerializer
+):
+
+    customer_username = (
+        serializers.CharField(
+            source="customer.username",
+            read_only=True
+        )
+    )
+
+    class Meta:
+
+        model = Reservation
+
+        fields = (
+            "id",
+            "customer_username",
+            "status",
+            "total_price",
+            "created_at",
+        )

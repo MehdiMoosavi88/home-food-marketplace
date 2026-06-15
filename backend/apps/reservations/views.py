@@ -22,12 +22,23 @@ from .models import (
 
 from .serializers import (
     ReservationCreateSerializer,
-    ReservationSerializer
+    ReservationSerializer,
+    CookReservationSerializer
 )
 
 from apps.menus.models import (
     MenuItemAvailability
 )
+
+from apps.cooks.permissions import (
+    IsCook
+)
+
+from drf_yasg.utils import (
+    swagger_auto_schema
+)
+
+from drf_yasg import openapi
 
 class ReservationCreateAPIView(
     generics.CreateAPIView
@@ -299,4 +310,289 @@ class ReservationCancelAPIView(
                 "Reservation cancelled successfully."
             },
             status=status.HTTP_200_OK
+        )
+    
+class CookReservationListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        CookReservationSerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def get_queryset(self):
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+            Reservation.objects
+            .none()
+        )
+
+        cook_profile = (
+        self.request.user
+        .cook_profile
+        )
+
+        queryset = (
+        Reservation.objects
+        .filter(
+            items__menu_item__menu__cook=
+            cook_profile
+        )
+        .prefetch_related(
+            "items",
+            "items__menu_item"
+        )
+        .distinct()
+        .order_by(
+            "-created_at"
+        )
+    )
+
+        status = (
+        self.request.query_params.get(
+            "status"
+        )
+    )
+
+        if status:
+
+            valid_statuses = [
+            choice[0]
+            for choice in
+            Reservation.Status.choices
+        ]
+
+            if status not in valid_statuses:
+
+                raise ValidationError(
+                {
+                    "status":
+                    (
+                        "Invalid status. "
+                        f"Allowed values: "
+                        f"{', '.join(valid_statuses)}"
+                    )
+                }
+            )
+
+            queryset = queryset.filter(
+            status=status
+        )
+
+        return queryset
+    
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+            "status",
+            openapi.IN_QUERY,
+            description=(
+                "Filter by reservation status"
+            ),
+            type=openapi.TYPE_STRING,
+            enum=[
+                "pending",
+                "confirmed",
+                "completed",
+                "cancelled",
+            ]
+        )
+    ],
+    tags=["Cook Reservations"]
+)
+    def get(
+    self,
+    request,
+    *args,
+    **kwargs
+):
+        return super().get(
+        request,
+        *args,
+        **kwargs
+    )
+    
+class CookReservationDetailAPIView(
+    generics.RetrieveAPIView
+):
+
+    serializer_class = (
+        ReservationSerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def get_queryset(self):
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                Reservation.objects
+                .none()
+            )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
+
+        return (
+            Reservation.objects
+            .filter(
+                items__menu_item__menu__cook=
+                cook_profile
+            )
+            .prefetch_related(
+        "items",
+        "items__menu_item"
+    )
+            .distinct()
+        )
+    
+class ReservationConfirmAPIView(
+    generics.UpdateAPIView
+):
+
+    serializer_class = (
+        ReservationSerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def get_queryset(self):
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                Reservation.objects
+                .none()
+            )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
+
+        return (
+            Reservation.objects
+            .filter(
+                items__menu_item__menu__cook=
+                cook_profile,
+                status=
+                Reservation.Status.PENDING
+            )
+            .distinct()
+        )
+
+    def patch(
+        self,
+        request,
+        *args,
+        **kwargs
+    ):
+
+        reservation = (
+            self.get_object()
+        )
+
+        reservation.status = (
+            Reservation.Status.CONFIRMED
+        )
+
+        reservation.save(
+            update_fields=[
+                "status"
+            ]
+        )
+
+        return Response(
+            ReservationSerializer(
+                reservation
+            ).data
+        )
+    
+class ReservationCompleteAPIView(
+    generics.UpdateAPIView
+):
+
+    serializer_class = (
+        ReservationSerializer
+    )
+
+    permission_classes = [
+        IsCook
+    ]
+
+    def get_queryset(self):
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                Reservation.objects
+                .none()
+            )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
+
+        return (
+            Reservation.objects
+            .filter(
+                items__menu_item__menu__cook=
+                cook_profile,
+                status=
+                Reservation.Status.CONFIRMED
+            )
+            .distinct()
+        )
+
+    def patch(
+        self,
+        request,
+        *args,
+        **kwargs
+    ):
+
+        reservation = (
+            self.get_object()
+        )
+
+        reservation.status = (
+            Reservation.Status.COMPLETED
+        )
+
+        reservation.save(
+            update_fields=[
+                "status"
+            ]
+        )
+
+        return Response(
+            ReservationSerializer(
+                reservation
+            ).data
         )

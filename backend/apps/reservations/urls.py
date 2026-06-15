@@ -5,6 +5,10 @@ from .views import (
     MyReservationListAPIView,
     ReservationDetailAPIView,
     ReservationCancelAPIView,
+    CookReservationListAPIView,
+    CookReservationDetailAPIView,
+    ReservationConfirmAPIView,
+    ReservationCompleteAPIView
 )
 
 urlpatterns = [
@@ -30,5 +34,29 @@ urlpatterns = [
     "<uuid:pk>/cancel/",
     ReservationCancelAPIView.as_view(),
     name="reservation-cancel"
-),
+    ),
+
+    path(
+    "cook/reservations/",
+    CookReservationListAPIView.as_view(),
+    name="cook-reservation-list"
+    ),
+
+    path(
+    "cook/reservations/<uuid:pk>/",
+    CookReservationDetailAPIView.as_view(),
+    name="cook-reservation-detail"
+    ),
+
+    path(
+    "cook/reservations/<uuid:pk>/confirm/",
+    ReservationConfirmAPIView.as_view(),
+    name="reservation-confirm"
+    ),
+
+    path(
+    "cook/reservations/<uuid:pk>/complete/",
+    ReservationCompleteAPIView.as_view(),
+    name="reservation-complete"
+    ),
 ]
