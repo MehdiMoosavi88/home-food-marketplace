@@ -30,8 +30,14 @@ from apps.menus.models import (
     MenuItemAvailability
 )
 
-from apps.cooks.permissions import (
-    IsCook
+# from apps.cooks.permissions import (
+#     IsCook
+# )
+
+from core.permissions.roles import (
+    IsCustomer,
+    IsCook,
+    IsAdmin
 )
 
 from drf_yasg.utils import (
@@ -47,6 +53,10 @@ class ReservationCreateAPIView(
     serializer_class = (
         ReservationCreateSerializer
     )
+
+    permission_classes = [
+        IsCustomer
+    ]
 
     def create(
         self,
@@ -138,6 +148,14 @@ class ReservationCreateAPIView(
                 availability.menu_item
             )
 
+            if (
+        menu_item.menu.cook.user
+        == self.request.user
+        ):
+                raise ValidationError(
+        "You cannot reserve your own food."
+        )
+
             ReservationItem.objects.create(
                 reservation=
                 reservation,
@@ -182,6 +200,10 @@ class MyReservationListAPIView(
         ReservationSerializer
     )
 
+    permission_classes = [
+        IsCustomer
+    ]
+
     def get_queryset(self):
 
         if getattr(
@@ -217,6 +239,10 @@ class ReservationDetailAPIView(
         ReservationSerializer
     )
 
+    permission_classes = [
+        IsCustomer
+    ]
+
     def get_queryset(self):
 
         if getattr(
@@ -244,6 +270,10 @@ class ReservationDetailAPIView(
 class ReservationCancelAPIView(
     APIView
 ):
+    
+    permission_classes = [
+        IsCustomer
+    ]
 
     @transaction.atomic
     def patch(
