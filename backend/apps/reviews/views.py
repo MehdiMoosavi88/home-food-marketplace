@@ -11,6 +11,14 @@ from core.permissions.roles import (
     IsCustomer
 )
 
+from rest_framework.permissions import (
+    AllowAny
+)
+
+from drf_yasg.utils import (
+    swagger_auto_schema
+)
+
 class ReviewCreateAPIView(
     generics.CreateAPIView
 ):
@@ -67,5 +75,109 @@ class ReviewCreateAPIView(
             serializer.validated_data.get(
                 "comment",
                 ""
+            )
+        )
+
+class MyReviewListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        ReviewSerializer
+    )
+
+    permission_classes = [
+        IsCustomer
+    ]
+
+    @swagger_auto_schema(
+        tags=["Reviews"]
+    )
+    def get(
+    self,
+    request,
+    *args,
+    **kwargs
+    ):
+        return super().get(
+        request,
+        *args,
+        **kwargs
+    )
+
+    def get_queryset(
+        self
+    ):
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                Review.objects
+                .none()
+            )
+
+        return (
+            Review.objects
+            .filter(
+                customer=
+                self.request.user
+            )
+            .select_related(
+                "cook",
+                "reservation"
+            )
+            .order_by(
+                "-created_at"
+            )
+        )
+    
+class PublicCookReviewListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        ReviewSerializer
+    )
+
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+    tags=["Public Reviews"]
+    )
+    def get(
+    self,
+    request,
+    *args,
+    **kwargs
+    ):
+        return super().get(
+        request,
+        *args,
+        **kwargs
+    )
+
+    def get_queryset(
+        self
+    ):
+
+        cook_id = (
+            self.kwargs[
+                "cook_id"
+            ]
+        )
+
+        return (
+            Review.objects
+            .filter(
+                cook_id=cook_id
+            )
+            .select_related(
+                "customer"
+            )
+            .order_by(
+                "-created_at"
             )
         )
