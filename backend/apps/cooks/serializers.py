@@ -14,9 +14,13 @@ class CookProfileSerializer(
         read_only=True
     )
 
-    rating = serializers.SerializerMethodField()
+    average_rating = (
+        serializers.SerializerMethodField()
+    )
 
-    reviews_count = serializers.SerializerMethodField()
+    reviews_count = (
+        serializers.SerializerMethodField()
+    )
 
     class Meta:
 
@@ -29,39 +33,35 @@ class CookProfileSerializer(
             "city",
             "address",
             "bio",
-            "rating",
+            "average_rating",
             "reviews_count",
         )
 
-    def get_rating(
-    self,
-    obj
+    def get_average_rating(
+        self,
+        obj
     ):
 
         result = (
-        obj.reviews.aggregate(
-            avg=Avg("rating")
-        )
-        )
-
-        rating = result["avg"]
-
-        if rating is None:
-            return 0
-
-        return round(
-        rating,
-        1
+            obj.reviews.aggregate(
+                avg=Avg("rating")
+            )
         )
 
+        avg = result["avg"]
+
+        if avg is None:
+            return None
+
+        return round(avg, 1)
 
     def get_reviews_count(
-    self,
-    obj
+        self,
+        obj
     ):
 
         return (
-        obj.reviews.count()
+            obj.reviews.count()
         )
 
 class PublicCookSerializer(
