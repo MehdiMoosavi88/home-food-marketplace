@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Review
+from .models import Review, Comment
 
 from apps.reservations.models import (
     Reservation
@@ -123,5 +123,73 @@ class ReviewSerializer(
             "customer_username",
             "rating",
             "comment",
+            "created_at",
+        )
+
+class CommentCreateSerializer(
+    serializers.ModelSerializer
+):
+
+    class Meta:
+
+        model = Comment
+
+        fields = (
+            "cook",
+            "menu",
+            "menu_item",
+            "text",
+        )
+
+    def validate(
+        self,
+        attrs
+    ):
+
+        targets = [
+
+            attrs.get("cook"),
+
+            attrs.get("menu"),
+
+            attrs.get("menu_item")
+        ]
+
+        selected = len(
+            [
+                item
+                for item in targets
+                if item is not None
+            ]
+        )
+
+        if selected != 1:
+
+            raise serializers.ValidationError(
+                "Select exactly one target."
+            )
+
+        return attrs
+    
+class CommentSerializer(
+    serializers.ModelSerializer
+):
+
+    customer_username = (
+        serializers.CharField(
+            source=
+            "customer.username",
+            read_only=True
+        )
+    )
+
+    class Meta:
+
+        model = Comment
+
+        fields = (
+            "id",
+            "customer_username",
+            "text",
             "created_at",
         )

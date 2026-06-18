@@ -92,7 +92,7 @@ class Comment(UUIDBaseModel):
 
     text = models.TextField()
 
-    is_approved = models.BooleanField(
+    is_active = models.BooleanField(
         default=True
     )
 
@@ -102,30 +102,9 @@ class Comment(UUIDBaseModel):
             "-created_at"
         ]
 
-    def clean(self):
-
-        targets = [
-            self.cook,
-            self.menu,
-            self.menu_item
-        ]
-
-        selected = len(
-            [
-                target
-                for target in targets
-                if target is not None
-            ]
-        )
-
-        if selected != 1:
-
-            raise ValidationError(
-                "Exactly one target must be selected."
-            )
-
     def __str__(self):
 
         return (
-            self.text[:50]
+            f"{self.customer.username}"
+            f" - {self.id}"
         )

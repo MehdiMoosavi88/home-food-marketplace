@@ -1,10 +1,12 @@
 from rest_framework import generics
 
-from .models import Review
+from .models import Review, Comment
 
 from .serializers import (
     ReviewCreateSerializer,
-    ReviewSerializer
+    ReviewSerializer,
+    CommentCreateSerializer,
+    CommentSerializer
 )
 
 from core.permissions.roles import (
@@ -179,5 +181,111 @@ class PublicCookReviewListAPIView(
             )
             .order_by(
                 "-created_at"
+            )
+        )
+    
+class CommentCreateAPIView(
+    generics.CreateAPIView
+):
+
+    serializer_class = (
+        CommentCreateSerializer
+    )
+
+    permission_classes = [
+        IsCustomer
+    ]
+
+    def perform_create(
+        self,
+        serializer
+    ):
+
+        serializer.save(
+            customer=
+            self.request.user
+        )
+
+class CookCommentListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        CommentSerializer
+    )
+
+    permission_classes = []
+
+    def get_queryset(
+        self
+    ):
+
+        return (
+            Comment.objects
+            .filter(
+                cook_id=
+                self.kwargs[
+                    "cook_id"
+                ],
+                is_active=True
+            )
+            .select_related(
+                "customer"
+            )
+        )
+    
+class MenuCommentListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        CommentSerializer
+    )
+
+    permission_classes = []
+
+    def get_queryset(
+        self
+    ):
+
+        return (
+            Comment.objects
+            .filter(
+                menu_id=
+                self.kwargs[
+                    "menu_id"
+                ],
+                is_active=True
+            )
+            .select_related(
+                "customer"
+            )
+        )
+    
+class MenuItemCommentListAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        CommentSerializer
+    )
+
+    permission_classes = []
+
+    def get_queryset(
+        self
+    ):
+
+        return (
+            Comment.objects
+            .filter(
+                menu_item_id=
+                self.kwargs[
+                    "menu_item_id"
+                ],
+                is_active=True
+            )
+            .select_related(
+                "customer"
             )
         )
