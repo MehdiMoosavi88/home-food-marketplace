@@ -86,6 +86,13 @@ path(
         "api/reservations/",
         include("apps.reservations.urls")
     ),
+
+    path(
+    "api/reviews/",
+    include(
+        "apps.reviews.urls"
+    )
+),
 ]
 
 if settings.DEBUG:

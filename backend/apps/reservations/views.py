@@ -30,10 +30,6 @@ from apps.menus.models import (
     MenuItemAvailability
 )
 
-# from apps.cooks.permissions import (
-#     IsCook
-# )
-
 from core.permissions.roles import (
     IsCustomer,
     IsCook,
