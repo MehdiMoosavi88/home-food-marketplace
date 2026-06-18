@@ -92,7 +92,14 @@ path(
     include(
         "apps.reviews.urls"
     )
-),
+    ),
+
+    path(
+    "notifications/",
+    include(
+        "apps.notifications.urls"
+    )
+    ),
 ]
 
 if settings.DEBUG:

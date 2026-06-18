@@ -42,6 +42,10 @@ from drf_yasg.utils import (
 
 from drf_yasg import openapi
 
+from apps.notifications.services import (
+    create_notification
+)
+
 class ReservationCreateAPIView(
     generics.CreateAPIView
 ):
@@ -186,6 +190,28 @@ class ReservationCreateAPIView(
 
         reservation.save()
 
+        cook_users = set()
+
+        for item in reservation.items.all():
+
+            cook_users.add(
+            item.menu_item
+            .menu
+            .cook
+            .user
+            )
+
+        for cook_user in cook_users:
+
+            create_notification(
+            user=cook_user,
+            title="New Reservation",
+            message=(
+            f"New reservation received "
+            f"from {reservation.customer.username}."
+            )
+        )
+
         return reservation
     
 class MyReservationListAPIView(
@@ -328,6 +354,29 @@ class ReservationCancelAPIView(
             update_fields=[
                 "status"
             ]
+        )
+
+        cook_users = set()
+
+        for item in reservation.items.all():
+
+            cook_users.add(
+            item.menu_item
+            .menu
+            .cook
+            .user
+            )
+
+        for cook_user in cook_users:
+
+            create_notification(
+            user=cook_user,
+            title="Reservation Cancelled",
+            message=(
+            f"Reservation "
+            f"{reservation.id} "
+            f"was cancelled."
+            )
         )
 
         return Response(
@@ -550,6 +599,16 @@ class ReservationConfirmAPIView(
             ]
         )
 
+        create_notification(
+        user=reservation.customer,
+        title="Reservation Confirmed",
+        message=(
+        f"Your reservation "
+        f"{reservation.id} "
+        f"has been confirmed."
+        )
+        )
+
         return Response(
             ReservationSerializer(
                 reservation
@@ -615,6 +674,16 @@ class ReservationCompleteAPIView(
             update_fields=[
                 "status"
             ]
+        )
+
+        create_notification(
+        user=reservation.customer,
+        title="Reservation Completed",
+        message=(
+        "Your reservation has "
+        "been completed. "
+        "Please leave a review."
+        )
         )
 
         return Response(
