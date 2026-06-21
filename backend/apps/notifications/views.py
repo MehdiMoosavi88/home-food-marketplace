@@ -17,6 +17,8 @@ from rest_framework import status
 
 from django.shortcuts import get_object_or_404
 
+from django.db.models import Q
+
 class MyNotificationListAPIView(
     generics.ListAPIView
 ):
@@ -46,7 +48,13 @@ class MyNotificationListAPIView(
         return (
             Notification.objects
             .filter(
-                user=self.request.user
+                Q(
+                    user=self.request.user
+                )
+                |
+                Q(
+                    is_global=True
+                )
             )
             .order_by(
                 "-created_at"

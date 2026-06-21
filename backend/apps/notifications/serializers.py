@@ -16,6 +16,7 @@ class NotificationSerializer(
             "title",
             "message",
             "is_read",
+            "is_global",
             "created_at",
         )
 
