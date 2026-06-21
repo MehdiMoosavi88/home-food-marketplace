@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'apps.reservations',
     'apps.reviews',
     'apps.notifications',
+    'apps.favorites',
 ]
 
 REST_FRAMEWORK = {

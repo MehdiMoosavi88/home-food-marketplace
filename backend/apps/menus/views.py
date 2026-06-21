@@ -276,11 +276,6 @@ class MenuItemUpdateAPIView(
 
     def get_queryset(self):
 
-        cook_profile = (
-            self.request.user
-            .cook_profile
-        )
-
         if getattr(
             self,
             "swagger_fake_view",
@@ -291,6 +286,11 @@ class MenuItemUpdateAPIView(
                 .objects
                 .none()
             )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
 
         return MenuItem.objects.filter(
             menu=cook_profile.menu
@@ -310,11 +310,6 @@ class MenuItemDeleteAPIView(
 
     def get_queryset(self):
 
-        cook_profile = (
-            self.request.user
-            .cook_profile
-        )
-
         if getattr(
             self,
             "swagger_fake_view",
@@ -325,6 +320,11 @@ class MenuItemDeleteAPIView(
                 .objects
                 .none()
             )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
 
         return MenuItem.objects.filter(
             menu=cook_profile.menu
@@ -375,11 +375,6 @@ class AvailabilityListAPIView(
 
     def get_queryset(self):
 
-        cook_profile = (
-            self.request.user
-            .cook_profile
-        )
-
         if getattr(
             self,
             "swagger_fake_view",
@@ -390,6 +385,11 @@ class AvailabilityListAPIView(
                 .objects
                 .none()
             )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
 
         return (
             MenuItemAvailability
@@ -417,11 +417,6 @@ class AvailabilityUpdateAPIView(
 
     def get_queryset(self):
 
-        cook_profile = (
-            self.request.user
-            .cook_profile
-        )
-
         if getattr(
             self,
             "swagger_fake_view",
@@ -432,6 +427,11 @@ class AvailabilityUpdateAPIView(
                 .objects
                 .none()
             )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
 
         return (
             MenuItemAvailability
@@ -465,11 +465,6 @@ class AvailabilityDeleteAPIView(
 
     def get_queryset(self):
 
-        cook_profile = (
-            self.request.user
-            .cook_profile
-        )
-
         if getattr(
             self,
             "swagger_fake_view",
@@ -480,6 +475,11 @@ class AvailabilityDeleteAPIView(
                 .objects
                 .none()
             )
+
+        cook_profile = (
+            self.request.user
+            .cook_profile
+        )
 
         return (
             MenuItemAvailability

@@ -7,6 +7,10 @@ from .models import (
     MenuItemAvailability
 )
 
+from apps.favorites.models import (
+    FavoriteMenuItem
+)
+
 
 class MenuItemAvailabilityInline(
     admin.TabularInline
@@ -116,6 +120,7 @@ class MenuItemAdmin(
         "menu",
         "price",
         "status_badge",
+        "favorites_count",
     )
 
     list_filter = (
@@ -193,6 +198,22 @@ class MenuItemAdmin(
         queryset.update(
             is_active=False
         )
+
+    def favorites_count(
+    self,
+    obj
+    ):
+        return (
+        FavoriteMenuItem.objects
+        .filter(
+            menu_item=obj
+        )
+        .count()
+    )
+
+    favorites_count.short_description = (
+    "Favorites"
+)
 
 
 @admin.register(MenuItemAvailability)

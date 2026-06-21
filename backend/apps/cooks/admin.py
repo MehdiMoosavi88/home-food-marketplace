@@ -5,6 +5,10 @@ from .models import (
     CookProfile
 )
 
+from apps.favorites.models import (
+    FavoriteCook
+)
+
 
 @admin.register(
     CookProfile
@@ -18,6 +22,7 @@ class CookProfileAdmin(
         "city",
         "phone",
         "average_rating",
+        "favorites_count",
     )
 
     search_fields = (
@@ -55,3 +60,19 @@ class CookProfileAdmin(
     average_rating.short_description = (
         "Rating"
     )
+
+    def favorites_count(
+    self,
+    obj
+    ):
+        return (
+        FavoriteCook.objects
+        .filter(
+            cook=obj
+        )
+        .count()
+    )
+
+    favorites_count.short_description = (
+    "Favorites"
+)

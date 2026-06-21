@@ -100,6 +100,13 @@ path(
         "apps.notifications.urls"
     )
     ),
+
+    path(
+    "favorites/",
+    include(
+        "apps.favorites.urls"
+    )
+    ),
 ]
 
 if settings.DEBUG:
