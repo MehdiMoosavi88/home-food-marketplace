@@ -34,7 +34,17 @@ class CookProfile(UUIDBaseModel):
     average_rating = models.DecimalField(
         max_digits=3,
         decimal_places=2,
+        null=True,
+        blank=True,
+        default=None
+    )
+
+    reviews_count = models.PositiveIntegerField(
         default=0
+    )
+
+    favorites_count = models.PositiveIntegerField(
+    default=0
     )
 
     is_active = models.BooleanField(

@@ -12,26 +12,16 @@ class Reservation(UUIDBaseModel):
     )
 
     class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        CONFIRMED = "confirmed", "Confirmed"
+        COMPLETED = "completed", "Completed"
+        CANCELLED = "cancelled", "Cancelled"
 
-        PENDING = (
-            "pending",
-            "Pending"
-        )
-
-        CONFIRMED = (
-            "confirmed",
-            "Confirmed"
-        )
-
-        CANCELLED = (
-            "cancelled",
-            "Cancelled"
-        )
-
-        COMPLETED = (
-            "completed",
-            "Completed"
-        )
+    ACTIVE_STATUSES = (
+        Status.PENDING,
+        Status.CONFIRMED,
+        Status.COMPLETED,
+    )
 
     status = models.CharField(
         max_length=20,

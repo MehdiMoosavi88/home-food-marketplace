@@ -13,7 +13,8 @@ from .views import (
     AvailabilityDeleteAPIView,
     PublicMenuAPIView,
     PublicMenuItemListAPIView,
-    PublicMenuItemDetailAPIView
+    PublicMenuItemDetailAPIView,
+    PublicMenuItemSearchAPIView
 
 )
 
@@ -89,5 +90,11 @@ urlpatterns = [
     "public/menu-items/<uuid:pk>/",
     PublicMenuItemDetailAPIView.as_view(),
     name="public-menu-item-detail"
+    ),
+
+    path(
+    "public/menu-items/",
+    PublicMenuItemSearchAPIView.as_view(),
+    name="public-menu-item-search"
     ),
 ]

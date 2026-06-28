@@ -21,6 +21,8 @@ from drf_yasg.utils import (
     swagger_auto_schema
 )
 
+from django.db.models import Avg
+
 class ReviewCreateAPIView(
     generics.CreateAPIView
 ):
@@ -34,51 +36,45 @@ class ReviewCreateAPIView(
     ]
 
     def perform_create(
-        self,
-        serializer
+    self,
+    serializer
     ):
 
         reservation = (
-            serializer.validated_data[
-                "reservation_obj"
-            ]
+        serializer.validated_data[
+            "reservation_obj"
+        ]
         )
 
         first_item = (
-            reservation.items
-            .select_related(
-                "menu_item__menu__cook"
-            )
-            .first()
+        reservation.items
+        .select_related(
+            "menu_item__menu__cook"
+        )
+        .first()
         )
 
         cook = (
-            first_item
-            .menu_item
-            .menu
-            .cook
+        first_item
+        .menu_item
+        .menu
+        .cook
         )
 
-        Review.objects.create(
-            customer=
-            self.request.user,
-
-            reservation=
-            reservation,
-
-            cook=cook,
-
-            rating=
-            serializer.validated_data[
-                "rating"
-            ],
-
-            comment=
-            serializer.validated_data.get(
-                "comment",
-                ""
-            )
+        review = Review.objects.create(
+        customer=self.request.user,
+        reservation=reservation,
+        cook=cook,
+        rating=serializer.validated_data[
+            "rating"
+        ],
+        comment=serializer.validated_data.get(
+            "comment",
+            ""
         )
+        )
+
+        return review
 
 class MyReviewListAPIView(
     generics.ListAPIView

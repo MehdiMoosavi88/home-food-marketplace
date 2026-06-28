@@ -45,6 +45,9 @@ class MenuItemSerializer(
             "image",
             "image_url",
             "is_active",
+            "favorites_count",
+            "orders_count",
+            "average_rating",
         )
         read_only_fields = (
             "id",

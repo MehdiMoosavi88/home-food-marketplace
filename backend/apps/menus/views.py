@@ -4,6 +4,8 @@ from drf_yasg.utils import (
     swagger_auto_schema
 )
 
+from drf_yasg import openapi
+
 from .models import (
     Menu,
     MenuItem,
@@ -31,6 +33,19 @@ from rest_framework.permissions import AllowAny
 from rest_framework.parsers import (
     MultiPartParser,
     FormParser
+)
+
+from django_filters.rest_framework import (
+    DjangoFilterBackend
+)
+
+from rest_framework.filters import (
+    SearchFilter,
+)
+
+from core.filters import (
+    MenuItemOrderingFilter,
+    MenuItemFilter
 )
 
 class MyMenuAPIView(
@@ -526,19 +541,60 @@ class PublicMenuItemListAPIView(
         MenuItemSerializer
     )
 
-    permission_classes = [AllowAny]
+    permission_classes = [
+        AllowAny
+    ]
+
+    @swagger_auto_schema(
+    tags=["Public Menu"],
+    operation_summary=
+    "Search Menu Items"
+    )
+    def get(
+    self,
+    request,
+    *args,
+    **kwargs
+    ):
+        return super().get(
+        request,
+        *args,
+        **kwargs
+    )
+
+    filter_backends = [
+        SearchFilter
+    ]
+
+    search_fields = [
+        "name",
+        "description",
+        "menu__title",
+        "menu__cook__user__username",
+    ]
 
     def get_queryset(self):
 
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItem.objects
+                .none()
+            )
+
         return (
             MenuItem.objects
+            .select_related(
+                "menu",
+                "menu__cook",
+                "menu__cook__user",
+            )
             .filter(
-                menu__cook_id=
-                self.kwargs[
-                    "cook_id"
-                ],
                 is_active=True,
-                menu__is_active=True
+                menu__is_active=True,
             )
             .order_by(
                 "name"
@@ -562,3 +618,96 @@ class PublicMenuItemDetailAPIView(
             menu__is_active=True
         )
     )
+
+class PublicMenuItemSearchAPIView(
+    generics.ListAPIView
+):
+
+    serializer_class = (
+        MenuItemSerializer
+    )
+
+    permission_classes = [
+        AllowAny
+    ]
+
+    filter_backends = [
+    DjangoFilterBackend,
+    SearchFilter,
+    MenuItemOrderingFilter,
+    ]
+
+    filterset_class = (
+    MenuItemFilter
+    )
+
+    search_fields = [
+        "name",
+        "description",
+        "menu__title",
+        "menu__cook__user__username",
+    ]
+
+    ordering_fields = [
+
+    "price",
+
+    "created_at",
+
+    "favorites_count",
+
+    "orders_count",
+
+    "average_rating",
+
+    "name",
+    ]
+
+    ordering = [
+    "name"
+    ]
+
+    @swagger_auto_schema(
+    manual_parameters=[
+        openapi.Parameter(
+            "min_price",
+            openapi.IN_QUERY,
+            type=openapi.TYPE_INTEGER,
+            description="Minimum price"
+        ),
+        openapi.Parameter(
+            "max_price",
+            openapi.IN_QUERY,
+            type=openapi.TYPE_INTEGER,
+            description="Maximum price"
+        ),
+    ],
+    tags=["Public Menu"]
+)
+
+    def get_queryset(self):
+
+        if getattr(
+            self,
+            "swagger_fake_view",
+            False
+        ):
+            return (
+                MenuItem.objects.none()
+            )
+
+        return (
+            MenuItem.objects
+            .select_related(
+                "menu",
+                "menu__cook",
+                "menu__cook__user",
+            )
+            .filter(
+                is_active=True,
+                menu__is_active=True,
+            )
+            .order_by(
+                "name"
+            )
+        )

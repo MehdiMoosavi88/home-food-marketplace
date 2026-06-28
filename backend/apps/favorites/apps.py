@@ -1,7 +1,17 @@
 from django.apps import AppConfig
 
+class FavoritesConfig(
+    AppConfig
+):
 
-class CooksConfig(AppConfig):
-    default_auto_field = "django.db.models.BigAutoField"
-    name = "apps.favorites"
-    label = "favorites"
+    default_auto_field = (
+        "django.db.models.BigAutoField"
+    )
+
+    name = (
+        "apps.favorites"
+    )
+
+    def ready(self):
+
+        import apps.favorites.signals

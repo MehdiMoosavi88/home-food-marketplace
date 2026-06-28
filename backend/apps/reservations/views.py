@@ -46,6 +46,10 @@ from apps.notifications.services import (
     create_notification
 )
 
+from core.services.statistics import (
+    update_statistics_after_reservation,
+)
+
 class ReservationCreateAPIView(
     generics.CreateAPIView
 ):
@@ -185,10 +189,16 @@ class ReservationCreateAPIView(
             )
 
         reservation.total_price = (
-            total_price
+    total_price
+    )
+        reservation.save(
+    update_fields=[
+        "total_price"
+        ]
         )
-
-        reservation.save()
+        update_statistics_after_reservation(
+    reservation
+    )
 
         cook_users = set()
 
@@ -347,14 +357,16 @@ class ReservationCancelAPIView(
             )
 
         reservation.status = (
-            Reservation.Status.CANCELLED
-        )
-
+    Reservation.Status.CANCELLED
+    )
         reservation.save(
-            update_fields=[
-                "status"
-            ]
+    update_fields=[
+        "status"
+        ]
         )
+        update_statistics_after_reservation(
+    reservation
+    )
 
         cook_users = set()
 

@@ -50,9 +50,9 @@ INSTALLED_APPS = [
     'apps.cooks',
     'apps.menus',
     'apps.reservations',
-    'apps.reviews',
+    'apps.reviews.apps.ReviewsConfig',
     'apps.notifications',
-    'apps.favorites',
+    'apps.favorites.apps.FavoritesConfig',
 ]
 
 REST_FRAMEWORK = {
@@ -68,11 +68,19 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
 
         'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
     ),
 
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+
+    "DEFAULT_PAGINATION_CLASS": (
+        "core.pagination.StandardResultsSetPagination"
+    ),
+
+    "PAGE_SIZE": 10,
 }
 
 SIMPLE_JWT = {
