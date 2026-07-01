@@ -649,19 +649,14 @@ class PublicMenuItemSearchAPIView(
     ]
 
     ordering_fields = [
-
     "price",
-
     "created_at",
-
     "favorites_count",
-
     "orders_count",
-
-    "average_rating",
-
+    "rate",
+    "menu__cook__average_rating",
     "name",
-    ]
+]
 
     ordering = [
     "name"

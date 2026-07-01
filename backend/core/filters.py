@@ -9,9 +9,7 @@ from apps.cooks.models import CookProfile
 from apps.menus.models import MenuItem
 
 
-class MenuItemOrderingFilter(
-    OrderingFilter
-):
+class MenuItemOrderingFilter(OrderingFilter):
 
     ordering_description = (
         "Use the 'ordering' parameter.\n\n"
@@ -20,11 +18,54 @@ class MenuItemOrderingFilter(
         "- ordering=-name\n"
         "- ordering=price\n"
         "- ordering=-price\n"
+        "- ordering=rate\n"
+        "- ordering=-rate (cook average rating)\n"
         "- ordering=created_at\n"
         "- ordering=-created_at\n\n"
-
         "Prefix with '-' for descending order."
     )
+
+    ORDERING_MAP = {
+    "name": "name",
+    "price": "price",
+    "favorites": "favorites_count",
+    "orders": "orders_count",
+    "rate": "menu__cook__average_rating",
+    "newest": "created_at",
+    }
+
+    def remove_invalid_fields(
+        self,
+        queryset,
+        fields,
+        view,
+        request,
+    ):
+
+        mapped = []
+
+        for field in fields:
+
+            descending = field.startswith("-")
+
+            key = field[1:] if descending else field
+
+            key = self.ORDERING_MAP.get(
+                key,
+                key,
+            )
+
+            if descending:
+                key = f"-{key}"
+
+            mapped.append(key)
+
+        return super().remove_invalid_fields(
+            queryset,
+            mapped,
+            view,
+            request,
+        )
 
 class CookOrderingFilter(
     OrderingFilter

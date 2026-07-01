@@ -107,6 +107,13 @@ path(
         "apps.favorites.urls"
     )
     ),
+
+    path(
+    "api/payments/",
+    include(
+        "apps.payments.urls"
+    ),
+    ),
 ]
 
 if settings.DEBUG:

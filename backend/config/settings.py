@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.reviews.apps.ReviewsConfig',
     'apps.notifications',
     'apps.favorites.apps.FavoritesConfig',
+    'apps.payments',
 ]
 
 REST_FRAMEWORK = {
@@ -210,3 +211,5 @@ AUTH_USER_MODEL = "accounts.User"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+FAKE_PAYMENT_SUCCESS = True

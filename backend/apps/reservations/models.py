@@ -33,6 +33,10 @@ class Reservation(UUIDBaseModel):
         default=0
     )
 
+    is_paid = models.BooleanField(
+    default=False
+    )
+
     class Meta:
 
         ordering = [
@@ -45,6 +49,18 @@ class Reservation(UUIDBaseModel):
             f"{self.customer.username}"
             f" - {self.id}"
         )
+    
+    def mark_as_paid(
+    self,
+    ):
+
+        self.is_paid = True
+
+        self.save(
+        update_fields=[
+            "is_paid",
+            ]
+            )
     
 class ReservationItem(UUIDBaseModel):
 

@@ -33,6 +33,9 @@ class MenuItemSerializer(
         read_only=True
     )
     image_url = serializers.SerializerMethodField()
+
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
 
         model = MenuItem
@@ -63,6 +66,23 @@ class MenuItemSerializer(
             )
 
         return None
+    
+    def get_average_rating(
+    self,
+    obj,
+    ):
+        
+        rating = (
+        obj.menu.cook.average_rating
+        )
+        
+        if rating is None:
+            return None
+
+        return round(
+        float(rating),
+        1,
+        )
     
 class MenuItemAvailabilitySerializer(
     serializers.ModelSerializer

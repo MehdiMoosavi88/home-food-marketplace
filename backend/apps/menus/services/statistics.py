@@ -25,18 +25,9 @@ def update_menu_item_statistics(menu_item):
         ).count()
     )
 
-    avg = (
-        menu_item.comments.aggregate(
-            avg=Avg("rating")
-        )["avg"]
-    )
-
-    menu_item.average_rating = avg
-
     menu_item.save(
         update_fields=[
             "orders_count",
             "favorites_count",
-            "average_rating",
         ]
     )
